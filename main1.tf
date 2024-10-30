@@ -1,7 +1,7 @@
 resource "aws_instance" "tf_project1" {
   ami               = "ami-06b21ccaeff8cd686"
   availability_zone = "us-east-1a"
-  instance_type     = "t2.medium"
+  instance_type     = "t2.micro"
   key_name          = "cwm_key"
 }
 
@@ -19,9 +19,9 @@ resource "aws_iam_group" "group1" {
 
 resource "aws_iam_group_membership" "groupadd1" {
   name = "tf-user_group_add"
-  users = [ 
+  users = [
     aws_iam_user.user1.name,
     aws_iam_user.user2.name
-   ]
+  ]
   group = aws_iam_group.group1.name
 }
