@@ -1,0 +1,91 @@
+provider "aws" {
+  region                   = "us-east-1"
+  profile                  = "root"
+  shared_credentials_files = ["~/.aws/credentials"]
+}
+
+// CREATE EC2 INSTANCE
+resource "aws_instance" "tf_instance" {
+  ami                    = "ami-0ddc798b3f1a5117e"
+  instance_type          = "t2.micro"
+  availability_zone      = "us-east-1a"
+  key_name               = "cwm_key"
+  vpc_security_group_ids = ["sg-0ab1258ec980435ee"]
+
+  tags = {
+    Name = "tf_test_ec2"
+  }
+
+  root_block_device {
+    volume_size = 8
+    volume_type = "gp2"
+  }
+}
+
+// CREATE VPC
+resource "aws_vpc" "tf_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "tf_test_vpc"
+  }
+}
+
+// CREATE 2 PUBLIC SUBNETS
+resource "aws_subnet" "tf_public_subnet1" {
+  vpc_id                  = aws_vpc.tf_vpc.id
+  cidr_block              = "10.0.0.0/20"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "tf_subnet_test1"
+  }
+}
+
+resource "aws_subnet" "tf_public_subnet2" {
+  vpc_id                  = aws_vpc.tf_vpc.id
+  cidr_block              = "10.0.16.0/20"
+  availability_zone       = "us-east-1b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "tf_subnet_test2"
+  }
+}
+
+// CREATE INTERNET GATEWAY
+resource "aws_internet_gateway" "tf_igw" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  tags = {
+    Name = "tf_igw_test"
+  }
+}
+
+// CREATE ROUTE TABLE
+resource "aws_route_table" "tf_route_table" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.tf_igw.id
+  }
+
+  tags = {
+    Name = "tf_route_table_test"
+  }
+}
+
+// SUBNET ASSOCIATIONS FOR ROUTE TABLE
+resource "aws_route_table_association" "tf_rta1" {
+  subnet_id      = aws_subnet.tf_public_subnet1.id
+  route_table_id = aws_route_table.tf_route_table.id
+}
+
+resource "aws_route_table_association" "tf_rta2" {
+  subnet_id      = aws_subnet.tf_public_subnet2.id
+  route_table_id = aws_route_table.tf_route_table.id
+}

@@ -1,11 +1,14 @@
-data "aws_vpc" "existing_vpc" {
-  id = "vpc-0a5373b912e8cdc7b"
+data "aws_vpc" "tfvpc" {
+  filter {
+    name = "tag:Name"
+    values = [ "default-vpc" ]
+  }
 }
 
-resource "aws_security_group" "allow_ssh_https_nfs" {
-  name        = "allow-ssh-https-nfs"
-  description = "Security group to allow SSH, HTTPS, and NFS"
-  vpc_id     = data.aws_vpc.existing_vpc.id
+resource "aws_security_group" "vpc_sg" {
+  name = "ssh-https-nfs"
+  description = "security group for vpc"
+  vpc_id = data.aws_vpc.tfvpc.id
 
   ingress {
     from_port   = 22
