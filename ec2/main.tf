@@ -1,9 +1,3 @@
-provider "aws" {
-  region                   = "us-east-1"
-  profile                  = "root"
-  shared_credentials_files = ["~/.aws/credentials"]
-}
-
 // CREATE EC2 INSTANCE
 resource "aws_instance" "tf_instance" {
   ami                    = var.al2_ami
