@@ -1,2 +1,0 @@
-eksclustername = "tfekscluster"
-eksnodegroupname = "tfnodegroup"

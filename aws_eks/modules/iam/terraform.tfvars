@@ -1,2 +1,0 @@
-eksclusterrolename = "tfekscluster"
-eksnodegrouprolename = "tfeksnodegrouprolename"
