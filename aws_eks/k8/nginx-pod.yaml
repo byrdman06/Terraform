@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+  namespace: web
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    resources:
+      limits:
+        cpu: 100m
+        memory: 240Mi
+      requests:
+        cpu: 50m
+        memory: 120Mi
+  nodeSelector: 
+    #topology.kubernetes.io/zone: us-east-1b
+    number: one
